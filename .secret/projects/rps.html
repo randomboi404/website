@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<title>Rock Paper Scissors</title>
+
+<head>
+    <style>
+        body {
+            background-color: rgb(25, 25, 25);
+            color: white;
+            font-family: Arial;
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: bolder;
+            font-family: Dosis;
+        }
+
+        .select-button {
+            background-color: transparent;
+            border: 3px solid #821910;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .select-icon {
+            height: 50px;
+        }
+
+        .result {
+            color: #5374b0;
+            font-family: Dosis;
+            font-size: 25px;
+        }
+
+        .score {
+            color: pink;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .reset-score-button {
+            color: white;
+            background-color: green;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <p class="title">Rock Paper Scissors</p>
+
+    <button class="select-button" onclick="
+            playGame('rock');
+            ">
+        <img class="select-icon" src="https://supersimple.dev/projects/rock-paper-scissors/images/rock-emoji.png" />
+    </button>
+
+    <button class="select-button" onclick="
+            playGame('paper');
+            ">
+        <img class="select-icon" src="https://supersimple.dev/projects/rock-paper-scissors/images/paper-emoji.png" />
+    </button>
+    <button class="select-button" onclick="
+            playGame('scissors');
+            ">
+        <img class="select-icon" src="https://supersimple.dev/projects/rock-paper-scissors/images/scissors-emoji.png" />
+    </button>
+
+    <p class="js-result result"></p>
+    <p class="js-moves moves"></p>
+    <p class="js-score score"></p>
+
+    <button class="reset-score-button" onclick="
+            score.wins = 0;
+            score.losses = 0;
+            score.ties = 0;
+
+            localStorage.removeItem('score');
+
+            updateScoreElement();
+
+            document.querySelector('.js-result').innerText = '';
+            document.querySelector('.js-moves').innerText = '';
+            ">
+        Reset Score
+    </button>
+
+    <script>
+        const score = JSON.parse(localStorage.getItem("score")) || {
+            wins: 0,
+            losses: 0,
+            ties: 0,
+        };
+
+        function updateScoreElement() {
+            document.querySelector(".js-score").innerText =
+                `Wins: ${score.wins}, Losses: ${score.losses}, Ties: ${score.ties}`;
+        }
+
+        updateScoreElement();
+
+        function pickComputerMove() {
+            let computerMove = "";
+            const randomNumber = Math.random();
+
+            if (randomNumber >= 0 && randomNumber < 1 / 3) computerMove = "rock";
+            if (randomNumber >= 1 / 3 && randomNumber < 2 / 3)
+                computerMove = "paper";
+            if (randomNumber >= 2 / 3 && randomNumber < 1)
+                computerMove = "scissors";
+
+            return computerMove;
+        }
+
+        function playGame(playerMove) {
+            const computerMove = pickComputerMove();
+
+            let result = "";
+
+            if (playerMove === "scissors") {
+                if (computerMove === "scissors") result = "Tie.";
+                else if (computerMove === "rock") result = "You lose.";
+                else result = "You win.";
+            } else if (playerMove === "paper") {
+                if (computerMove === "paper") result = "Tie.";
+                else if (computerMove === "scissors") result = "You lose.";
+                else result = "You win.";
+            } else if (playerMove === "rock") {
+                if (computerMove === "rock") result = "Tie.";
+                else if (computerMove === "paper") result = "You lose.";
+                else result = "You win.";
+            }
+
+            if (result === "You win.") {
+                score.wins++;
+            } else if (result === "You lose.") {
+                score.losses++;
+            } else {
+                score.ties++;
+            }
+
+            localStorage.setItem("score", JSON.stringify(score));
+
+            updateScoreElement();
+
+            document.querySelector(".js-result").innerText = result;
+            document.querySelector(".js-moves").innerHTML = `You
+<img class="select-icon" src="https://supersimple.dev/projects/rock-paper-scissors/images/${playerMove}-emoji.png" />
+<img class="select-icon" src="https://supersimple.dev/projects/rock-paper-scissors/images/${computerMove}-emoji.png" />
+        Computer`;
+        }
+    </script>
+</body>
+
+</html>
